@@ -37,9 +37,11 @@ describe('yieldb', function() {
   });
 
   describe('connect()', function() {
-    it('is a GeneratorFunction', function(done) {
-      assert.equal('GeneratorFunction', m.connect.constructor.name);
-      done();
+    it('is a Promise', function(done) {
+      m.connect(uri).then(function(db){
+        assert(db);
+        done();
+      });
     });
 
     it('connects to mongodb when yielded', function*() {

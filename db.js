@@ -29,7 +29,7 @@ function Db(database) {
  * @api private
  */
 
-Db.init = function*(database) {
+Db.init = function(database) {
   debug('initialize database');
   var db = new Db(database);
   return db;

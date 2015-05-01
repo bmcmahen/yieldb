@@ -6,13 +6,13 @@ var Db = require('./db');
 var Collection = require('./collection');
 var mquery = require('mquery');
 
-exports.connect = function*(uri, opts) {
-  var nativeDb = yield connectToMongo(uri, opts);
-
-  debug('connected to %s', uri.replace(/\/\/([^@]+)@/, '//{AUTH}@'));
-
-  return yield Db.init(nativeDb);
-}
+exports.connect = function(uri, opts) {
+  return connectToMongo(uri, opts)
+    .then(function(nativeDb){
+      debug('connected to %s', uri.replace(/\/\/([^@]+)@/, '//{AUTH}@'));
+      return Db.init(nativeDb);
+    });
+};
 
 exports.Db = Db;
 exports.Collection = Collection;
@@ -24,7 +24,10 @@ exports.mquery = mquery;
  */
 
 function connectToMongo(uri, opts) {
-  return function(cb) {
-    mongo.connect(uri, opts || {}, cb);
-  }
+  return new Promise(function(resolve, reject){
+    mongo.connect(uri, opts || {}, function(err, db){
+      if (err) return reject(err);
+      resolve(db);
+    });
+  });
 }
